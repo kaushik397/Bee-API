@@ -1,1 +1,1 @@
-test_key='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'
+test_key='Enter_your_API_key'

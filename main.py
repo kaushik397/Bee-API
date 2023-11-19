@@ -9,18 +9,20 @@ from topics import TopicGen
 
 class Questions(BaseModel):
     Topic:str
+    APIkey:str
     @root_validator (pre=True,skip_on_failure=True)
     def change_input_data(cls, v):
-        if len(v) < 1:
+        if len(v) < 2:
             raise ValueError("All the fields are required")
         return v
 
 class Topics(BaseModel):
     Topic:str
     difficulty:str
+    APIkey:str
     @root_validator (pre=True,skip_on_failure=True)
     def change_input_data(cls, v):
-        if len(v) < 2:
+        if len(v) < 3:
             raise ValueError("All the fields are required")
         return v
 
@@ -45,9 +47,10 @@ def status():
 @app.post("/questions")
 async def RequestedData(item:Questions):
     item=item.dict()
-    print(item)
+    # print(item)
     topic=item['Topic']
-    response = questionGen(topic)
+    apikey=item['APIkey']
+    response = questionGen(topic=topic,apikey=apikey)
     if response!='':
         return response
 
@@ -56,7 +59,8 @@ async def RequestedTopic(topics:Topics):
     topics=topics.dict()
     topicsloc=topics['Topic']
     difficulty=topics['difficulty']
-    response =TopicGen(topicsloc,difficulty)
+    apikey=topics['APIkey']
+    response =TopicGen(topic=topicsloc,difficulty=difficulty,apiKey=apikey)
     if response!='':
         return response
 
