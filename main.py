@@ -47,7 +47,6 @@ def status():
 @app.post("/questions")
 async def RequestedData(item:Questions):
     item=item.dict()
-    # print(item)
     topic=item['Topic']
     apikey=item['APIkey']
     response = questionGen(topic=topic,apikey=apikey)

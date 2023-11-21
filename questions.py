@@ -3,7 +3,7 @@ from langchain.chains import SequentialChain
 import openai
 from langchain.llms import OpenAI
 import json
-
+import os 
 
 def questionGen(topic,apikey):
   template="""
