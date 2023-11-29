@@ -4,11 +4,11 @@ from langchain.chains import LLMChain
 # import openai
 from langchain.llms import OpenAI
 import json
-import os 
+import os
 
 def questionGen(topic,apikey):
   template="""
-  As a teacher with expertise knowledge on {topic} create 5 questions with distributed difficulty level being a scale of 0 to 3000 in which 0 is easiest and 3000 is hardest and 1500 is medium to test the knowledge of students and teach better and of type MCQ with four different options and one correctAanswer. and return everything in a JSON object with variables question, options, correct answer, and difficulty level of question.
+    As a teacher with expertise knowledge on {topic} create 5 questions with distributed difficulty level being a scale of 0 to 3000 in which 0 is easiest and 3000 is hardest and 1500 is medium to test the knowledge of students and teach better and of type MCQ with four different options and one correctAanswer. and return everything in a JSON object with variables question, options, correctanswer, and difficultylevel of question.
   """
   prompt = PromptTemplate(template=template, input_variables=["topic"])
   llm=OpenAI(openai_api_key=apikey,temperature=0.6,max_tokens=1500)
@@ -19,4 +19,11 @@ def questionGen(topic,apikey):
     responseret=json.loads(response)
     return responseret
   except:
-    return {"Error":"Unable to create JSON data format pls check logs"}
+    return {"Question1":{
+        'Question': 'Error in making questions from OpenAI',
+        'Options': ['Error',
+        'Error',
+        'Error',
+        'Error'],
+        'CorrectAnswer': 'Error',
+        'DifficultyLevel': 0}}
