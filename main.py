@@ -1,32 +1,39 @@
 from typing import Union
-from fastapi import FastAPI,File, UploadFile
+from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel, ValidationError, root_validator
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse
-import os
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from questions import questionGen
 from topics import TopicGen
 
 class Questions(BaseModel):
-    Topic:str
-    APIkey:str
+    Topic: str
+    APIkey: str
     @root_validator (pre=True,skip_on_failure=True)
     def change_input_data(cls, v):
         if len(v) < 2:
-            raise ValueError("All the fields are required")
+            raise ValueError("Both the fields are required")
         return v
 
 class Topics(BaseModel):
-    Topic:str
-    difficulty:str
-    APIkey:str
+    Topic: str
+    difficulty: str
+    APIkey: str
     @root_validator (pre=True,skip_on_failure=True)
     def change_input_data(cls, v):
         if len(v) < 3:
-            raise ValueError("All the fields are required")
+            raise ValueError("3 fields are required")
         return v
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
+)
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
     errors = []
@@ -38,29 +45,29 @@ async def validation_exception_handler(request, exc):
     return JSONResponse(
         status_code=422,
         content={'detail': 'Validation error', 'errors': errors},
+        headers={"Access-Control-Allow-Origin": "*"},  # Adjust as needed
     )
-
-@app.get("/",status_code=200)
+@app.get("/", status_code=200)
 def status():
-    return{"status":200}
+    return {"status": 200}
 
 @app.post("/questions")
-async def RequestedData(item:Questions):
-    item=item.dict()
-    topic=item['Topic']
-    apikey=item['APIkey']
-    response = questionGen(topic=topic,apikey=apikey)
-    if response!='':
+
+async def requested_data(item: Questions):
+    # No need to convert to dict, FastAPI will handle it
+    topic = item.Topic
+    apikey = item.APIkey
+    print(item)
+    response = questionGen(topic=topic, apikey=apikey)
+    if response != '':
         return response
 
 @app.post("/questions/subtopics")
-async def RequestedTopic(topics:Topics):
-    topics=topics.dict()
-    topicsloc=topics['Topic']
-    difficulty=topics['difficulty']
-    apikey=topics['APIkey']
-    response =TopicGen(topic=topicsloc,difficulty=difficulty,apiKey=apikey)
-    if response!='':
+async def requested_topic(topics: Topics):
+    # No need to convert to dict, FastAPI will handle it
+    topicsloc = topics.Topic
+    difficulty = topics.difficulty
+    apikey = topics.APIkey
+    response = TopicGen(topic=topicsloc, difficulty=difficulty, apiKey=apikey)
+    if response != '':
         return response
-
-    
