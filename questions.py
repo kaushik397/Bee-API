@@ -6,7 +6,7 @@ from langchain.llms import OpenAI
 import json
 import os
 
-def questionGenv1(topic,apikey):
+def questionGen(topic,apikey):
   template="""
    Create a JSON object containing a list of 5 multiple-choice questions on {topic}. Each question should have the following structure:
 - "question": (The text of the question)
