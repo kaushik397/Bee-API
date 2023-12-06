@@ -58,7 +58,7 @@ async def requested_data(item: Questions):
     # No need to convert to dict, FastAPI will handle it
     topic = item.Topic
     apikey = item.APIkey
-    print(item)
+    # print(item)
     response = questionGen(topic=topic, apikey=apikey)
     if response != '':
         return response
