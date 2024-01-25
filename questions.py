@@ -18,14 +18,14 @@ Ensure that the questions cover various aspects of {topic} and provide meaningfu
   """
   prompt = PromptTemplate(template=template, input_variables=["topic"])
 
-  llm=OpenAI(openai_api_key=apikey,temperature=0.5,max_tokens=max_tokens_limit)
+  llm=OpenAI(openai_api_key=apikey,temperature=0.5,max_tokens=max_tokens_limit,model='gpt-3.5-turbo-instruct')
   llm_chain=LLMChain(prompt=prompt, llm=llm)
   response=llm_chain.run({"topic":topic})
-  
   response_length = len(response.split())
+
   if response_length>max_tokens_limit:
     max_tokens_adjusted=max_tokens_limit+(response_length - max_tokens_limit)
-    llm=OpenAI(openai_api_key=apikey,temperature=0.5,max_tokens=max_tokens_adjusted)
+    llm=OpenAI(openai_api_key=apikey,temperature=0.5,max_tokens=max_tokens_adjusted,model='gpt-3.5-turbo-instruct')
     llm_chain = LLMChain(prompt=prompt, llm=llm)
     response=llm_chain.run({"topic":topic})
 

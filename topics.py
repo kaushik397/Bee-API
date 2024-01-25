@@ -12,7 +12,7 @@ def TopicGen(topic, difficulty, apiKey, max_tokens_limit=1000):
         -"Sub_Topics":(containing list of sub topics)
         Ensure that the sub-topics cover various aspects of {topic} based on {difficulty}. Return the JSON structure with the key "sub_topics."""
     prompt = PromptTemplate(template=template, input_variables=["topic", "difficulty"])
-    llm = OpenAI(openai_api_key=apiKey, temperature=0.6, max_tokens=max_tokens_limit)
+    llm = OpenAI(openai_api_key=apiKey, temperature=0.6, max_tokens=max_tokens_limit,model='gpt-3.5-turbo-instruct')
     llm_chain = LLMChain(prompt=prompt, llm=llm)
     # Run the initial request
     response = llm_chain.run({"topic": topic, "difficulty": difficulty})
@@ -23,7 +23,7 @@ def TopicGen(topic, difficulty, apiKey, max_tokens_limit=1000):
     # Dynamically adjust max_tokens if needed
     if response_length > max_tokens_limit:
         max_tokens_adjusted = max_tokens_limit + (response_length - max_tokens_limit)
-        llm = OpenAI(openai_api_key=apiKey, temperature=0.6, max_tokens=max_tokens_adjusted)
+        llm = OpenAI(openai_api_key=apiKey, temperature=0.6, max_tokens=max_tokens_adjusted,model='gpt-3.5-turbo-instruct')
         llm_chain = LLMChain(prompt=prompt, llm=llm)
         response = llm_chain.run({"topic": topic, "difficulty": difficulty})
     # print("Raw response:", response)  # Add this line to print the raw response
